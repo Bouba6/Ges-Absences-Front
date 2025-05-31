@@ -1,0 +1,120 @@
+<!-- src/app/dashboard/dashboard.component.html -->
+
+<div class="wrapper">
+  <!-- Barre latérale et en-tête (inchangés) -->
+  <aside class="side-nav">
+    <div class="logo">
+      <img src="assets/LOGO-ISM.jpg"  alt="Institut Supérieur de Management" />    </div>
+    <nav>
+      <ul>
+        <li>
+          <a routerLink="/dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Tableau de bord</span>
+          </a>
+        </li>
+        <li class="active">
+          <a routerLink="/students">
+            <span class="nav-icon">👥</span>
+            <span class="nav-label">Étudiants</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/settings">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Paramètres</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-left">
+        <span class="icon-user">👤</span>
+        <span class="username">Admin</span>
+      </div>
+      <button class="btn-logout">Déconnexion</button>
+    </header>
+
+    <!-- Contenu “Étudiants / Détail” -->
+    <section class="content student-detail">
+      <!-- En-tête général du bloc -->
+      <div class="student-header">
+        <div class="avatar">
+          <span class="avatar-icon">👤</span>
+        </div>
+        <div class="student-info">
+          <h2>Djibril CISSÉ</h2>
+          <p>Ingénieur, L3 CSDD</p>
+        </div>
+      </div>
+
+      <!-- Container arrondi et ombré pour Absences / Retards -->
+      <div class="absences-container">
+        <!-- Titre du bloc -->
+        <p class="section-title">Absences / Retards</p>
+
+        <!-- Filtres déroulants -->
+        <div class="filters">
+          <select>
+            <option value="">Date</option>
+            <!-- Vous pouvez ajouter ici les dates sous forme d'options dynamiques -->
+          </select>
+          <select>
+            <option value="">Matière</option>
+            <!-- Options de matières -->
+          </select>
+          <select>
+            <option value="">Type</option>
+            <option value="Absence">Absence</option>
+            <option value="Retard">Retard</option>
+          </select>
+          <select>
+            <option value="">Justification</option>
+            <option value="Maladie">Maladie</option>
+            <option value="Décès">Décès</option>
+            <option value="Embouteillage">Embouteillage</option>
+          </select>
+        </div>
+
+        <!-- Tableau des absences/retards -->
+        <table class="absences-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Matière</th>
+              <th>Type</th>
+              <th>Justification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Exemple de données statiques -->
+            <tr *ngFor="let abs of absences" [ngClass]="{ 'with-justif': abs.justification }">
+              <td>{{ abs.date }}</td>
+              <td>{{ abs.subject }}</td>
+              <td>{{ abs.type }}</td>
+              <td>
+                <button
+                  class="btn-justif"
+                  *ngIf="abs.justification"
+                  (click)="openJustification(abs)"
+                >
+                  {{ abs.justification }}
+                </button>
+                <span *ngIf="!abs.justification">-</span>
+              </td>
+            </tr>
+
+            <!-- Si vous voulez un row vide quand il n'y a pas de données :
+            <tr>
+              <td colspan="4">Aucune absence trouvée.</td>
+            </tr>
+            -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

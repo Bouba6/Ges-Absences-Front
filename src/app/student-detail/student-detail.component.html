@@ -1,0 +1,90 @@
+<!-- src/app/student-detail/student-detail.component.html -->
+
+<div class="wrapper">
+  <div class="main-content">
+    <header class="header">
+      <div class="student-info">
+        <ng-container *ngIf="student$ | async as stu; else loadingStudent">
+          <h2>{{ stu.name }}</h2>
+          <p>{{ stu.role }}, {{ stu.promotion }}</p>
+        </ng-container>
+        <ng-template #loadingStudent><h2>Chargement…</h2></ng-template>
+      </div>
+      <button class="btn-logout">Déconnexion</button>
+    </header>
+
+    <section class="content">
+      <h3>Absences / Retards</h3>
+
+      <div class="filters">
+        <select><option value="">Date</option></select>
+        <select><option value="">Matière</option></select>
+        <select>
+          <option value="">Type</option>
+          <option value="Absence">Absence</option>
+          <option value="Retard">Retard</option>
+        </select>
+        <select>
+          <option value="">Justification</option>
+          <option value="Maladie">Maladie</option>
+          <option value="Décès">Décès</option>
+          <option value="Embouteillage">Embouteillage</option>
+        </select>
+      </div>
+
+      <table class="absences-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Matière</th>
+            <th>Type</th>
+            <th>Justification</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let abs of absences$ | async" [appTypeHighlight]="abs.type">
+            <td>{{ abs.date }}</td>
+            <td>{{ abs.subject }}</td>
+            <td>{{ abs.type }}</td>
+            <td>
+              <button
+                class="btn-justif"
+                *ngIf="abs.justification"
+                (click)="openJustification(abs)"
+              >
+                {{ abs.justification }}
+              </button>
+              <span *ngIf="!abs.justification">-</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="justification-popup" *ngIf="selectedJustification as justif">
+        <div class="popup-content">
+          <h3>POPUP JUSTIFICATION</h3>
+          <p>Bonjour,</p>
+          <p>
+            Due à une grippe soudaine, je n’ai pas pu participer au cours
+            d’Informatique le <strong>{{ justif.date }}</strong>.
+          </p>
+          <p>Veuillez prendre en compte la fiche :</p>
+          <a class="btn-file" [href]="justif.justificationLink" download>
+            FICHE_MED.pdf
+          </a>
+
+          <div class="btn-group">
+            <button class="btn-reject" (click)="rejectJustification()">
+              Rejeter
+            </button>
+            <button class="btn-validate" (click)="validateJustification()">
+              Valider
+            </button>
+          </div>
+
+          <span class="close-icon" (click)="closeJustification()"></span>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

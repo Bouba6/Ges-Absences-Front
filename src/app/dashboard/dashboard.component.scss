@@ -1,0 +1,247 @@
+/* src/app/dashboard/dashboard.component.scss */
+
+/* ========== Style global du wrapper ========== */
+.wrapper {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* ========== Barre latérale (inchangée) ========== */
+.side-nav {
+  width: 220px;
+  background-color: #ff8c00;
+  display: flex;
+  flex-direction: column;
+  color: white;
+
+  .logo {
+    padding: 20px;
+    text-align: center;
+    img {
+      max-width: 50%;
+      height: auto;
+    }
+  }
+
+  nav {
+    flex: 1;
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        &.active, &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+        a {
+          display: flex;
+          align-items: center;
+          color: white;
+          text-decoration: none;
+          padding: 12px 20px;
+          transition: background-color 0.2s ease-in-out;
+          .nav-icon {
+            font-size: 18px;
+            margin-right: 12px;
+          }
+          .nav-label {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ========== Contenu principal ========== */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  /* En-tête (header) */
+  .header {
+    background-color: white;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+    .header-left {
+      display: flex;
+      align-items: center;
+
+      .icon-user {
+        font-size: 20px;
+        margin-right: 8px;
+      }
+      .username {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+
+    .btn-logout {
+      background-color: #ff8c00;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: darken(#ff8c00, 10%);
+      }
+    }
+  }
+
+  /* ========== Section Student Detail ========== */
+  .content.student-detail {
+    flex: 1;
+    padding: 24px;
+
+    /* ====== Entête avec avatar et infos étudiant ====== */
+    .student-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+
+      .avatar {
+        width: 60px;
+        height: 60px;
+        border: 2px solid #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 16px;
+        background-color: white;
+
+        .avatar-icon {
+          font-size: 28px;
+          color: #333;
+        }
+      }
+
+      .student-info {
+        h2 {
+          margin: 0;
+          font-size: 1.5rem;
+          color: #333;
+        }
+        p {
+          margin: 2px 0 0 0;
+          color: #666;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    /* ====== Conteneur arrondi et ombré ====== */
+    .absences-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+
+      /* Titre du bloc */
+      .section-title {
+        margin: 0 0 12px 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      /* ====== Filtres ====== */
+      .filters {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+
+        select {
+          padding: 6px 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: #ffe0b2; /* couleur orange clair pour rappeler la charte */
+          font-size: 0.9rem;
+          color: #333;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+            border-color: darken(#ccc, 10%);
+          }
+        }
+      }
+
+      /* ====== Tableau ====== */
+      .absences-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+
+        thead {
+          background-color: #f0f0f0;
+          th {
+            padding: 10px;
+            text-align: left;
+            color: #333;
+            font-weight: 500;
+            border-bottom: 2px solid #ddd;
+          }
+        }
+
+        tbody {
+          tr {
+            background-color: #fafafa;
+
+            &.with-justif {
+              /* Optionnel : si une justification existe, on ajoute une légère couleur */
+              background-color: #fff8e1;
+            }
+
+            &:nth-child(even) {
+              background-color: #f5f5f5;
+            }
+
+            td {
+              padding: 10px;
+              color: #333;
+              border-bottom: 1px solid #ddd;
+            }
+
+            .btn-justif {
+              background-color: #ff8c00;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              padding: 4px 10px;
+              cursor: pointer;
+              font-size: 0.85rem;
+
+              &:hover {
+                background-color: darken(#ff8c00, 8%);
+              }
+            }
+          }
+
+          /* Si vous voulez un message “aucune absence” :
+          tr.no-data td {
+            text-align: center;
+            color: #888;
+            padding: 16px;
+          }
+          */
+        }
+      }
+    }
+  }
+}
