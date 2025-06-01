@@ -1,0 +1,17 @@
+<div *ngIf="etudiant" class="p-4">
+  <h2 class="text-xl font-bold mb-4">Détail de l'étudiant</h2>
+  <p><strong>Nom :</strong> {{ etudiant.nom }}</p>
+  <p><strong>Prénom :</strong> {{ etudiant.prenom }}</p>
+  <p><strong>Email :</strong> {{ etudiant.email }}</p>
+  <p><strong>Date de naissance :</strong> {{ etudiant.dateNaissance | date }}</p>
+  <p><strong>Adresse :</strong> {{ etudiant.adresse }}, {{ etudiant.ville }}</p>
+  <p><strong>Sexe :</strong> {{ etudiant.sexe }}</p>
+  <p><strong>Filière :</strong> {{ etudiant.filiere || '-' }}</p>
+  <p><strong>Niveau :</strong> {{ etudiant.niveau || '-' }}</p>
+
+  <a routerLink="/etudiants" class="text-blue-600 mt-4 inline-block">← Retour à la liste</a>
+</div>
+
+<div *ngIf="!etudiant" class="text-red-500 p-4">
+  Étudiant non trouvé ou erreur de chargement.
+</div>
