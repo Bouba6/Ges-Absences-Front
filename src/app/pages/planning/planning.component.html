@@ -1,0 +1,110 @@
+<div class="bg-gradient-to-br ml-72 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white shadow-xl rounded-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-6">
+                <h2 class="text-3xl font-extrabold text-white text-center tracking-wide">
+                    Votre Emploi du Temps
+                </h2>
+            </div>
+
+            <!-- Skeleton Loader -->
+
+
+            <!-- Error Handling -->
+
+
+            <!-- Dynamic Schedule Table -->
+            <ng-container *ngIf="planning$ | async as plannings">
+                <div class="overflow-x-auto" *ngIf="plannings?.results?.length > 0; else noData">
+                    <table class="w-full border-separate border-spacing-0 rounded-lg">
+                        <thead>
+                            <tr class="bg-indigo-50">
+                                <th
+                                    class="px-6 py-4 text-left text-indigo-700 font-semibold border-b-2 border-indigo-200 w-24">
+                                    Heure
+                                </th>
+                                <ng-container *ngFor="let jour of joursSemaine">
+                                    <th
+                                        class="px-6 py-4 text-center text-indigo-700 font-semibold border-b-2 border-indigo-200">
+                                        {{ jour }}
+                                    </th>
+                                </ng-container>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let heure of heuresJour" class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-gray-700 border-b border-gray-200">
+                                    {{ heure }}
+                                </td>
+                                <ng-container *ngFor="let jour of joursSemaine">
+                                    <td class="px-4 py-4 border-b border-gray-200 relative ">
+                                        <ng-container
+                                            *ngFor="let cours of getCoursParJour(plannings.results, jour, heure); let i = index">
+
+                                            <div class="group relative mb-2 last:mb-0 " (click)="ViewClasse(cours.id)">
+                                                <div class="absolute -left-2 top-0 bottom-0 w-1 
+                                                    transition-all duration-300 
+                                                    group-hover:w-2
+                                                    rounded-full
+                                                    {{ getCourseColorClass(cours) }}">
+                                                </div>
+                                                <div class="pl-4 transform transition-all duration-300 
+                                                    bg-white border 
+                                                    hover:border-indigo-300
+                                                    rounded-lg p-3 shadow-md 
+                                                    group-hover:translate-x-1 
+                                                    group-hover:shadow-lg
+                                                    flex items-start space-x-3">
+
+
+
+                                                    <div class="flex-grow">
+                                                        <div class="flex justify-between items-center">
+                                                            <div>
+                                                                <div class="font-semibold text-gray-800 
+                                                                    group-hover:text-indigo-600 
+                                                                    transition-colors">
+                                                                    {{ cours.nomClasse }}
+                                                                </div>
+                                                                <div class="text-sm text-gray-500 
+                                                                    group-hover:text-indigo-500 
+                                                                    transition-colors">
+                                                                    {{ cours.nomProfesseur }}
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="text-xs text-gray-400 
+                                                                group-hover:text-indigo-400 
+                                                                transition-colors">
+                                                                <span>
+                                                                    Salle 204
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="cours.details" class="mt-1 text-xs text-gray-500 
+                                                            opacity-0 group-hover:opacity-100 
+                                                            transition-opacity duration-300">
+                                                            {{ cours.details }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- No Data Template -->
+                <ng-template #noData>
+                    <div class="p-6 text-center text-gray-500">
+                        <p>Aucun cours disponible pour le moment</p>
+                    </div>
+                </ng-template>
+            </ng-container>
+        </div>
+    </div>
+</div>

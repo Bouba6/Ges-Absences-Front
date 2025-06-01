@@ -1,0 +1,108 @@
+<section class="mx-auto ml-72 p-6 w-auto">
+    <!-- Profil Section -->
+    <div class="bg-white shadow-2xl rounded-xl overflow-hidden">
+        <!-- Gradient Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-24"></div>
+
+        <!-- Profile Content -->
+        <div class="flex flex-col md:flex-row items-center p-6 -mt-24">
+            <!-- Profile Picture -->
+            <!-- <div
+                class="w-32 h-32 rounded-full border-4 border-white bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-5xl font-bold shadow-lg mb-4 md:mb-0 md:mr-6">
+                {{ prof.nom?.charAt(0) || '?' }}{{ prof.prenom?.charAt(0) || '?' }}
+            </div> -->
+
+            <!-- Profile Info -->
+
+
+            <!-- Action Buttons -->
+            <div class="md:ml-6 mt-4 md:mt-0 flex md:flex-col space-x-3 md:space-x-0 md:space-y-3">
+                <button
+                    class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-100 transition flex items-center justify-center w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    Contacter
+                </button>
+                <button
+                    class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition flex items-center justify-center w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Modifier
+                </button>
+                <button (click)="voirEmploiDuTemps()"
+                    class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Voir l'Emploi du Temps
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Classes Enseignées Section -->
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden mt-6">
+        <div class="bg-green-600 text-white px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Classes Enseignées</h1>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom de la
+                        Classe</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effectifs
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let classe of classes">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ classe.nomClasse }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ classe.effectifs }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            {{ classe.niveau }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2">
+                            <button routerLink="/detailClasse/{{classe.id}}"
+                                class="text-indigo-600 hover:text-indigo-900">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                            <button class="text-gray-600 hover:text-gray-900">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
