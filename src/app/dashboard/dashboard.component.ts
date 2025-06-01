@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { StudentStore } from '../core/stores/student.store';
+import { Student } from '../models/student.model';
+import { Router } from '@angular/router';
 
 interface Absence {
   date: string;
@@ -10,11 +13,11 @@ interface Absence {
 }
 
 @Component({
-  standalone: true,
   selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule]
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   absences: Absence[] = [
@@ -42,14 +45,35 @@ export class DashboardComponent implements OnInit {
   todayAbsences = 15;
   pendingJustifications = 7;
 
-  constructor() {}
+  student$!: Observable<Student | null>;
+  selectedAbsence: Absence | null = null;
 
-  ngOnInit(): void {
-    // À implémenter : appels aux services pour récupérer les données réelles
+  constructor(
+    private studentStore: StudentStore,
+    private router: Router
+  ) {
+    this.student$ = this.studentStore.student$;
+    this.studentStore.student$.subscribe((student: Student | null) => {
+      if (student) {
+        this.absences = student.absences || [];
+      }
+    });
   }
 
-  openJustification(abs: Absence): void {
-    // Mettez ici la logique pour ouvrir un popup ou une modal
-    console.log('Afficher popup pour:', abs);
+  ngOnInit(): void {
+    this.studentStore.loadStudent('1'); // Charger le premier étudiant pour l'exemple
+  }
+
+  viewStudentDetails(studentId: number): void {
+    this.router.navigate(['/students', studentId]);
+  }
+
+  openJustification(absence: Absence): void {
+    this.selectedAbsence = absence;
+    console.log('Opening justification:', this.selectedAbsence);
+  }
+
+  closeJustification(): void {
+    this.selectedAbsence = null;
   }
 }

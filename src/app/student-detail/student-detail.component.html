@@ -1,24 +1,36 @@
-<!-- src/app/student-detail/student-detail.component.html -->
-
+<!-- Template principal -->
 <div class="wrapper">
-  <div class="main-content">
-    <header class="header">
-      <div class="student-info">
-        <ng-container *ngIf="student$ | async as stu; else loadingStudent">
+  <!-- Header avec info étudiant et bouton déconnexion -->
+  <header class="header">
+    <div class="student-info">
+      <ng-container *ngIf="student$ | async as stu; else loadingStudent">
+        <div class="avatar">
+          <span class="avatar-icon">👤</span>
+        </div>
+        <div class="student-text">
           <h2>{{ stu.name }}</h2>
           <p>{{ stu.role }}, {{ stu.promotion }}</p>
-        </ng-container>
-        <ng-template #loadingStudent><h2>Chargement…</h2></ng-template>
-      </div>
-      <button class="btn-logout">Déconnexion</button>
-    </header>
+        </div>
+      </ng-container>
+      <ng-template #loadingStudent>
+        <h2>Chargement…</h2>
+      </ng-template>
+    </div>
+    <button class="btn-logout">Déconnexion</button>
+  </header>
 
-    <section class="content">
-      <h3>Absences / Retards</h3>
-
+  <!-- Section principale : absences/retards -->
+  <section class="content student-detail">
+    <div class="absences-container">
+      <!-- Titre et filtres -->
+      <p class="section-title">Absences / Retards</p>
       <div class="filters">
-        <select><option value="">Date</option></select>
-        <select><option value="">Matière</option></select>
+        <select>
+          <option value="">Date</option>
+        </select>
+        <select>
+          <option value="">Matière</option>
+        </select>
         <select>
           <option value="">Type</option>
           <option value="Absence">Absence</option>
@@ -32,6 +44,7 @@
         </select>
       </div>
 
+      <!-- Tableau des absences -->
       <table class="absences-table">
         <thead>
           <tr>
@@ -39,52 +52,106 @@
             <th>Matière</th>
             <th>Type</th>
             <th>Justification</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let abs of absences$ | async" [appTypeHighlight]="abs.type">
+          <tr
+            *ngFor="let abs of absencesForDisplay; let i = index"
+            [ngClass]="{ 'justified': abs.isJustified }"
+          >
             <td>{{ abs.date }}</td>
             <td>{{ abs.subject }}</td>
             <td>{{ abs.type }}</td>
             <td>
-              <button
-                class="btn-justif"
-                *ngIf="abs.justification"
-                (click)="openJustification(abs)"
-              >
-                {{ abs.justification }}
-              </button>
+              <span *ngIf="abs.justification">{{ abs.justification }}</span>
               <span *ngIf="!abs.justification">-</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  class="btn-view"
+                  *ngIf="abs.justification"
+                  (click)="viewJustification(abs)"
+                >
+                  Voir
+                </button>
+                <button
+                  class="btn-justify"
+                  [disabled]="abs.isJustified"
+                  (click)="openJustificationPopup(abs)"
+                >
+                  {{ abs.isJustified ? 'Justifié' : 'Justifier' }}
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </section>
+</div>
 
-      <div class="justification-popup" *ngIf="selectedJustification as justif">
-        <div class="popup-content">
-          <h3>POPUP JUSTIFICATION</h3>
-          <p>Bonjour,</p>
-          <p>
-            Due à une grippe soudaine, je n’ai pas pu participer au cours
-            d’Informatique le <strong>{{ justif.date }}</strong>.
-          </p>
-          <p>Veuillez prendre en compte la fiche :</p>
-          <a class="btn-file" [href]="justif.justificationLink" download>
-            FICHE_MED.pdf
-          </a>
+<!-- Overlays -->
+<!-- Modal de visualisation de justification -->
+<div class="overlay" *ngIf="showViewJustif">
+  <div class="view-justif-modal">
+    <h3>Justification de l'absence</h3>
+    <p><strong>Date :</strong> {{ selectedAbsence?.date }}</p>
+    <p><strong>Matière :</strong> {{ selectedAbsence?.subject }}</p>
+    <p><strong>Type :</strong> {{ selectedAbsence?.type }}</p>
+    <p><strong>Statut :</strong> {{ selectedAbsence?.justification }}</p>
+    <p *ngIf="selectedAbsence?.justificationComment"><strong>Commentaire :</strong> {{ selectedAbsence?.justificationComment }}</p>
+    <div class="modal-buttons">
+      <button class="btn-close" (click)="closeViewJustif()">Fermer</button>
+    </div>
+  </div>
+</div>
 
-          <div class="btn-group">
-            <button class="btn-reject" (click)="rejectJustification()">
-              Rejeter
-            </button>
-            <button class="btn-validate" (click)="validateJustification()">
-              Valider
-            </button>
+<!-- Popup de justification -->
+<div class="overlay" *ngIf="showJustifPopup">
+  <div class="popup justify-popup">
+    <div class="popup-header">
+      <h3>Justification de l'absence</h3>
+      <button class="btn-close" (click)="closeJustificationPopup()">×</button>
+    </div>
+    <div class="popup-content">
+      <div class="justification-details">
+        <div class="form-group">
+          <label>Statut de l'absence</label>
+          <div class="status-value">
+            {{ selectedAbsence?.justification || 'Non justifiée' }}
           </div>
+        </div>
 
-          <span class="close-icon" (click)="closeJustification()"></span>
+        <div class="form-group" *ngIf="selectedAbsence?.justificationComment">
+          <label>Commentaire</label>
+          <div class="comment-value">
+            {{ selectedAbsence?.justificationComment }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Date</label>
+          <div class="date-value">
+            {{ selectedAbsence?.date }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Matière</label>
+          <div class="subject-value">
+            {{ selectedAbsence?.subject }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Type</label>
+          <div class="type-value">
+            {{ selectedAbsence?.type }}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   </div>
 </div>
