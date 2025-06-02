@@ -19,7 +19,7 @@ export class LoginPageComponent {
       password: this.password
     };
 
-    this.http.post<any>('http://localhost:8080/api/auth/login', body).subscribe({
+    this.http.post<any>('https://ges-abscences-backend.onrender.com/api/auth/login', body).subscribe({
       next: (response) => {
         const token = response.token;
         // Sauvegarde du token dans le localStorage
