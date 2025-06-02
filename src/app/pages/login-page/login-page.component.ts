@@ -36,7 +36,7 @@ export class LoginPageComponent {
           localStorage.setItem('authToken', token);
           console.log('[Auth] Token sauvegardé dans localStorage');
 
-          this.router.navigate(['professeur/list-prof']);
+          this.router.navigate(['abscences']);
         },
         error: (err) => {
           console.error('[Auth] Erreur de connexion : statut=', err.status);
