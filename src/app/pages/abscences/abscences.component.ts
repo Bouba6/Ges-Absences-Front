@@ -30,6 +30,7 @@ export class AbscencesComponent {
   openJustification(absenceId: string) {
     this.abscenceService.getJustificatif(absenceId).subscribe((response) => {
       this.selectedJustificatif = response.results;
+      console.log(this.selectedJustificatif);
       this.dialog.open(this.popupTemplate); // ✅ fonctionne maintenant
     });
   }
