@@ -14,44 +14,152 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./abscences.component.css']
 })
 export class AbscencesComponent {
+  // États de loading principaux
+  isLoading: boolean = false;
+  isLoadingJustification: boolean = false;
+  isLoadingActions: boolean = false;
+  
+  // États de loading spécifiques pour les actions
+  isActionValidating: boolean = false;
+  isActionRejecting: boolean = false;
+  
+  // Données
   abscences: AbscenceResponse[] = [];
   selectedJustificatif?: JustificatifDetails;
+  selectedAbsenceId?: string;
 
-  @ViewChild('popupTemplate') popupTemplate!: TemplateRef<any>; // 👈 À ajouter !
+  @ViewChild('popupTemplate') popupTemplate!: TemplateRef<any>;
 
   constructor(private abscenceService: AbscenceService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.abscenceService.selectAll().subscribe(response => {
-      this.abscences = response.results;
+    this.loadAbscences();
+  }
+
+  private loadAbscences(): void {
+    this.isLoading = true;
+    this.abscenceService.selectAll().subscribe({
+      next: (response) => {
+        this.abscences = response.results;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des absences:', error);
+        this.isLoading = false;
+        // Vous pouvez ajouter une notification d'erreur ici
+      }
     });
   }
 
-  openJustification(absenceId: string) {
-    this.abscenceService.getJustificatif(absenceId).subscribe((response) => {
-      this.selectedJustificatif = response.results;
-      console.log(this.selectedJustificatif);
-      this.dialog.open(this.popupTemplate); // ✅ fonctionne maintenant
+  openJustification(absenceId: string): void {
+    // Éviter d'ouvrir si déjà en cours de chargement
+    if (this.isLoadingJustification) {
+      return;
+    }
+
+    this.isLoadingJustification = true;
+    this.selectedAbsenceId = absenceId;
+
+    this.abscenceService.getJustificatif(absenceId).subscribe({
+      next: (response) => {
+        this.selectedJustificatif = response.results;
+        console.log(this.selectedJustificatif);
+        this.isLoadingJustification = false;
+        this.selectedAbsenceId = undefined;
+        this.dialog.open(this.popupTemplate, {
+          width: '700px',
+          height: '500px',
+          disableClose: false,
+          panelClass: 'custom-dialog-container'
+        });
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement du justificatif:', error);
+        this.isLoadingJustification = false;
+        this.selectedAbsenceId = undefined;
+        // Vous pouvez ajouter une notification d'erreur ici
+      }
     });
   }
 
-  valider(id: string) {
-    if (this.selectedJustificatif) {
+  valider(id: string): void {
+    if (this.selectedJustificatif && !this.isLoadingActions) {
+      this.isLoadingActions = true;
+      this.isActionValidating = true;
+
       this.abscenceService
         .postJustificationValidation(id, {
           statutJustificatif: 'VALIDE'
         })
-        .subscribe(() => alert('Justification validée.'));
+        .subscribe({
+          next: (response) => {
+            // Mettre à jour le statut local
+            if (this.selectedJustificatif) {
+              this.selectedJustificatif.statutJustification = 'VALIDE';
+            }
+            
+            // Actualiser la liste des absences
+            this.loadAbscences();
+            
+            this.isLoadingActions = false;
+            this.isActionValidating = false;
+            
+            // Fermer la modal
+            this.dialog.closeAll();
+            
+            // Notification de succès
+            alert('Justification validée avec succès.');
+          },
+          error: (error) => {
+            console.error('Erreur lors de la validation:', error);
+            this.isLoadingActions = false;
+            this.isActionValidating = false;
+            alert('Erreur lors de la validation de la justification.');
+          }
+        });
     }
   }
 
-  rejeter(id: string) {
-    if (this.selectedJustificatif) {
+  rejeter(id: string): void {
+    if (this.selectedJustificatif && !this.isLoadingActions) {
+      this.isLoadingActions = true;
+      this.isActionRejecting = true;
+
       this.abscenceService
         .postJustificationValidation(id, {
           statutJustificatif: 'REJETEE'
         })
-        .subscribe(() => alert('Justification rejetée.'));
+        .subscribe({
+          next: (response) => {
+            // Mettre à jour le statut local
+            if (this.selectedJustificatif) {
+              this.selectedJustificatif.statutJustification = 'REJETEE';
+            }
+            
+            // Actualiser la liste des absences
+            this.loadAbscences();
+            
+            this.isLoadingActions = false;
+            this.isActionRejecting = false;
+            
+            // Fermer la modal
+            this.dialog.closeAll();
+            
+            // Notification de succès
+            alert('Justification rejetée avec succès.');
+          },
+          error: (error) => {
+            console.error('Erreur lors du rejet:', error);
+            this.isLoadingActions = false;
+            this.isActionRejecting = false;
+            alert('Erreur lors du rejet de la justification.');
+          }
+        });
     }
+  }
+
+  // Méthode pour actualiser manuellement les données
+  refresh(): void {
+    this.loadAbscences();
   }
 }
