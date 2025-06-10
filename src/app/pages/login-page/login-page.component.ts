@@ -3,9 +3,10 @@ import { FormsModule } from '@angular/forms'; // <-- À ajouter
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { LoginService } from '../../services/Impl/Login.service';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-login-page',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
@@ -13,7 +14,7 @@ export class LoginPageComponent {
   isLoading: boolean = false;
   login: string = '';
   password: string = '';
-  constructor(private http: HttpClient, private router: Router,private loginService: LoginService) { }
+  constructor(private http: HttpClient, private router: Router, private loginService: LoginService) { }
   onSubmit() {
     this.isLoading = true;
     const body = {
