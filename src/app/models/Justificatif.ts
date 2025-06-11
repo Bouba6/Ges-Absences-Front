@@ -8,6 +8,6 @@ export interface JustificatifDetails {
   nomEleve: string;
   nomCours: string;
   statutAbscence: 'JUSTIFIER' | 'NON_JUSTIFIER';
-  imagegUrl: [];
+  imgUrl: [];
 
 }
