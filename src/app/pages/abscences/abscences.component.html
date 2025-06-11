@@ -276,9 +276,9 @@
                                         class="text-gray-800 leading-relaxed w-48 h-48 whitespace-pre-wrap text-sm object-cover rounded-lg">
                                 </div>
                             </div> -->
-                            <div class="flex-1 p-4" *ngFor="let image of selectedJustificatif?.imgUrl">
-                                <div
-                                    class="bg-gradient-to-br from-white to-gray-50 rounded-lg border border-gray-200 h-full p-4 flex items-start">
+                            <div class="flex flex-wrap p-4">
+                                <div class="bg-gradient-to-br from-white to-gray-50 rounded-lg border border-gray-200 h-full p-4 flex items-start"
+                                    *ngFor="let image of selectedJustificatif?.imgUrl">
                                     <img [src]="image" alt="img"
                                         class="text-gray-800 leading-relaxed w-48 h-48 whitespace-pre-wrap text-sm object-cover rounded-lg">
                                 </div>
