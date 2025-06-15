@@ -4,5 +4,5 @@ import { HttpResponse } from "@angular/common/http";
 
 export interface ILoginService {
 
-    SelectByLoginPassword(login: string, password: string): Observable<HttpResponse<User>>
+    SelectByLoginPassword(login: string, password: string,withCredentials?: boolean): Observable<HttpResponse<User>>
 }

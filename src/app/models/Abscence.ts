@@ -5,6 +5,7 @@ export interface AbscenceResponse {
   nomCours: string;
   typeAbscence: string;
   statutAbscence: string;
+  nomEleve: string;
 }
 
 export interface AbscenceApiResponse {
