@@ -9,7 +9,7 @@ export interface IAbscenceService {
     // create(object: Abscence): Observable<RestResponse<Abscence>>;
     // update(id: number, object: Abscence): Observable<RestResponse<Abscence>>;
     // findById(id: number): Observable<RestResponse<Abscence>>;
-    selectAll(size: number, page: number): Observable<AbscenceApiResponse>;
-    getJustificatif(absenceId: string): Observable<{ results: JustificatifDetails }>
+    selectAll(size: number, page: number,withCredentials?: boolean): Observable<AbscenceApiResponse>;
+    getJustificatif(absenceId: string,withCredentials?: boolean): Observable<{ results: JustificatifDetails }>
   
 }

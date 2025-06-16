@@ -8,6 +8,62 @@
         <div class="w-16 h-1 bg-gradient-to-r from-[#F58613] to-[#351F16] rounded-full"></div>
     </div>
 
+    <!-- Section filtres avec design moderne -->
+    <div class="mb-6 bg-white rounded-2xl shadow-xl border border-[#F58613]/10 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-[#351F16] flex items-center gap-2">
+                <i class="fas fa-filter text-[#F58613]"></i>
+                Filtrer les absences
+            </h3>
+            <div class="text-sm text-gray-500">
+                {{ totalItems }} résultat(s) trouvé(s)
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <button (click)="setFilter('ALL')" [disabled]="isLoading" [class.active]="currentFilter === 'ALL'" class="relative px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border-2 
+                       hover:transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
+                       bg-white border-gray-200 text-gray-700 hover:border-[#F58613] hover:text-[#F58613]
+                       [&.active]:bg-gradient-to-r [&.active]:from-[#F58613] [&.active]:to-orange-600 
+                       [&.active]:text-white [&.active]:border-[#F58613] [&.active]:shadow-lg">
+                <i class="fas fa-list mr-2"></i>
+                Toutes les absences
+                <div *ngIf="isLoading && currentFilter === 'ALL'"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                </div>
+            </button>
+
+            <button (click)="setFilter('JUSTIFIER')" [disabled]="isLoading"
+                [class.active]="currentFilter === 'JUSTIFIER'" class="relative px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border-2 
+                       hover:transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
+                       bg-white border-gray-200 text-gray-700 hover:border-green-500 hover:text-green-600
+                       [&.active]:bg-gradient-to-r [&.active]:from-green-500 [&.active]:to-green-600 
+                       [&.active]:text-white [&.active]:border-green-500 [&.active]:shadow-lg">
+                <i class="fas fa-check-circle mr-2"></i>
+                Justifiées
+                <div *ngIf="isLoading && currentFilter === 'JUSTIFIER'"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                </div>
+            </button>
+
+            <button (click)="setFilter('NON_JUSTIFIER')" [disabled]="isLoading"
+                [class.active]="currentFilter === 'NON_JUSTIFIER'" class="relative px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border-2 
+                       hover:transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
+                       bg-white border-gray-200 text-gray-700 hover:border-red-500 hover:text-red-600
+                       [&.active]:bg-gradient-to-r [&.active]:from-red-500 [&.active]:to-red-600 
+                       [&.active]:text-white [&.active]:border-red-500 [&.active]:shadow-lg">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                Non justifiées
+                <div *ngIf="isLoading && currentFilter === 'NON_JUSTIFIER'"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                </div>
+            </button>
+        </div>
+    </div>
+
     <!-- Container du tableau avec design élégant et loader -->
     <div class="bg-white rounded-2xl shadow-xl border border-[#F58613]/10 overflow-hidden relative">
 
@@ -42,11 +98,15 @@
                         <i class="fas fa-hashtag mr-2"></i>ID
                     </th>
                     <th class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
+                        <i class="fas fa-book mr-2"></i>Eleve
+                    </th>
+                    <th class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
                         <i class="fas fa-file-alt mr-2"></i>Justification
                     </th>
                     <th class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
                         <i class="fas fa-book mr-2"></i>Cours
                     </th>
+
                     <th class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
                         <i class="fas fa-tag mr-2"></i>Type
                     </th>
@@ -68,7 +128,11 @@
                             </div>
                             <div>
                                 <p class="text-gray-500 font-semibold">Aucune absence trouvée</p>
-                                <p class="text-gray-400 text-sm">Les absences apparaîtront ici une fois disponibles</p>
+                                <p class="text-gray-400 text-sm">
+                                    {{ currentFilter === 'ALL' ? 'Aucune absence disponible' :
+                                    currentFilter === 'JUSTIFIER' ? 'Aucune absence justifiée' :
+                                    'Aucune absence non justifiée' }}
+                                </p>
                             </div>
                         </div>
                     </td>
@@ -90,6 +154,10 @@
                         </div>
                     </td>
 
+                    <td class="px-4 py-4 font-semibold text-[#351F16]">
+                        {{ abs.nomEleve }}
+                    </td>
+
                     <td class="px-4 py-4 max-w-xs truncate">
                         <span [class]="abs.idJustification ? '' : 'text-gray-500 italic'">
                             {{ abs.idJustification || 'Aucune' }}
@@ -106,12 +174,13 @@
 
                     <td class="px-4 py-4">
                         <span [ngClass]="{
-                            'bg-blue-100 text-blue-800 border-blue-200': abs.statutAbscence === 'JUSTIFIEE',
-                            'bg-gray-100 text-gray-800 border-gray-200': abs.statutAbscence === 'NON_JUSTIFIEE',
+                            'bg-green-100 text-green-800 border-green-200': abs.statutAbscence === 'JUSTIFIER',
+                            'bg-red-100 text-red-800 border-red-200': abs.statutAbscence === 'NON_JUSTIFIER',
                             'bg-yellow-100 text-yellow-800 border-yellow-200': abs.statutAbscence === 'EN_ATTENTE'
                         }"
                             class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide border">
-                            {{ abs.statutAbscence }}
+                            {{ abs.statutAbscence === 'JUSTIFIER' ? 'Justifiée' :
+                            abs.statutAbscence === 'NON_JUSTIFIER' ? 'Non justifiée' : abs.statutAbscence }}
                         </span>
                     </td>
 
@@ -130,6 +199,61 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination moderne avec design cohérent -->
+    <div *ngIf="!isLoading && totalPages > 1"
+        class="mt-6 bg-white rounded-2xl shadow-xl border border-[#F58613]/10 p-6">
+        <div class="flex items-center justify-between">
+
+            <!-- Info pagination -->
+            <div class="flex items-center gap-4">
+                <div class="text-sm text-gray-600">
+                    <span class="font-semibold text-[#351F16]">{{ currentPage + 1 }}</span>
+                    sur
+                    <span class="font-semibold text-[#351F16]">{{ totalPages }}</span> pages
+                </div>
+                <div class="text-sm text-gray-500">
+                    {{ totalItems }} résultat(s) au total
+                </div>
+            </div>
+
+            <!-- Contrôles pagination -->
+            <div class="flex items-center gap-2">
+
+                <!-- Bouton précédent -->
+                <button (click)="previousPage()" [disabled]="isFirstPage" class="px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 
+                           border-2 border-gray-200 text-gray-700 hover:border-[#F58613] hover:text-[#F58613]
+                           hover:transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed
+                           disabled:hover:transform-none disabled:hover:border-gray-200 disabled:hover:text-gray-700">
+                    <i class="fas fa-chevron-left mr-2"></i>
+                    Précédent
+                </button>
+
+                <!-- Numéros de pages -->
+                <div class="flex gap-1 mx-4">
+                    <button *ngFor="let page of pages" (click)="onPageChange(page)"
+                        [class.active]="page === currentPage" class="w-10 h-10 rounded-lg font-semibold text-sm transition-all duration-300 border-2
+                               border-gray-200 text-gray-700 hover:border-[#F58613] hover:text-[#F58613]
+                               hover:transform hover:scale-110 hover:shadow-md
+                               [&.active]:bg-gradient-to-r [&.active]:from-[#F58613] [&.active]:to-orange-600 
+                               [&.active]:text-white [&.active]:border-[#F58613] [&.active]:shadow-lg
+                               [&.active]:transform [&.active]:scale-110">
+                        {{ page + 1 }}
+                    </button>
+                </div>
+
+                <!-- Bouton suivant -->
+                <button (click)="nextPage()" [disabled]="isLastPage" class="px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 
+                           border-2 border-gray-200 text-gray-700 hover:border-[#F58613] hover:text-[#F58613]
+                           hover:transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed
+                           disabled:hover:transform-none disabled:hover:border-gray-200 disabled:hover:text-gray-700">
+                    Suivant
+                    <i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 <!-- Modal moderne avec Tailwind -->

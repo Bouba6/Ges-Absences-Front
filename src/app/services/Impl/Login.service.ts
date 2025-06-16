@@ -18,12 +18,13 @@ export class LoginService extends GenericService<User> implements ILoginService 
         this.endpoint = 'abscences'
         this.apiUrl = `${environment.apiUrl}/${this.endpoint}`
     }
-    SelectByLoginPassword(login: string, password: string): Observable<HttpResponse<User>> {
+    SelectByLoginPassword(login: string, password: string, withCredentials: boolean = true): Observable<HttpResponse<User>> {
         const body = { login, password };
         console.log('[AuthService] Requête login envoyée avec :', body);
 
         return this.http.post<User>(`${this.apiUrl1}/login`, body, {
-            observe: 'response'
+            observe: 'response',
+            withCredentials: withCredentials
         });
     }
 

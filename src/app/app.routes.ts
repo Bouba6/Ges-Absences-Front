@@ -6,6 +6,7 @@ import { PlanningComponent } from './pages/planning/planning.component';
 import { LayoutVideComponent } from './components/layout-vide/layout-vide.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { AbscencesComponent } from './pages/abscences/abscences.component';
+import { authGuard } from './pages/guards/auth.guard';
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     {
@@ -15,6 +16,7 @@ export const routes: Routes = [
             { path: '', component: ListProfComponent },
 
         ],
+        canActivate: [authGuard]
     },
     {
         path: 'login',
@@ -22,6 +24,7 @@ export const routes: Routes = [
         children: [
             { path: '', component: LoginPageComponent },
         ],
+        
     },
     {
         path: 'abscences',
@@ -29,6 +32,7 @@ export const routes: Routes = [
         children: [
             { path: '', component: AbscencesComponent },
         ],
+        canActivate: [authGuard]
     },
 
 

@@ -1,5 +1,5 @@
 import { Component, ViewChild, TemplateRef } from '@angular/core';
-import { AbscenceResponse } from '../../models/Abscence';
+import { AbscenceApiResponse, AbscenceResponse } from '../../models/Abscence';
 import { AbscenceService } from '../../services/Impl/abscence.service';
 import { CommonModule } from '@angular/common';
 import { JustificatifDetails } from '../../models/Justificatif';
@@ -14,15 +14,24 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./abscences.component.css']
 })
 export class AbscencesComponent {
+
+  totalItems: number = 0;
+  currentPage: number = 0;
+  totalPages: number = 0;
+  pageSize: number = 3;
+
+  currentFilter: 'ALL' | 'JUSTIFIER' | 'NON_JUSTIFIER' = 'ALL';
+
+
   // États de loading principaux
   isLoading: boolean = false;
   isLoadingJustification: boolean = false;
   isLoadingActions: boolean = false;
-  
+
   // États de loading spécifiques pour les actions
   isActionValidating: boolean = false;
   isActionRejecting: boolean = false;
-  
+
   // Données
   abscences: AbscenceResponse[] = [];
   selectedJustificatif?: JustificatifDetails;
@@ -36,20 +45,91 @@ export class AbscencesComponent {
     this.loadAbscences();
   }
 
-  private loadAbscences(): void {
+  private loadAbscences(page: number = 0): void {
+
     this.isLoading = true;
-    this.abscenceService.selectAll().subscribe({
-      next: (response) => {
+    this.currentPage = page;
+
+    let request: any;
+
+    switch (this.currentFilter) {
+      case 'JUSTIFIER':
+        request = this.abscenceService.getJustifiedAbscences(page, this.pageSize);
+        break;
+      case 'NON_JUSTIFIER':
+        request = this.abscenceService.getNonJustifiedAbscences(page, this.pageSize);
+        break;
+      default:
+        request = this.abscenceService.selectAll1(page, this.pageSize);
+    }
+
+    request.subscribe({
+      next: (response: AbscenceApiResponse) => {
         this.abscences = response.results;
+        this.totalItems = response.totalItems;
+        this.currentPage = response.currentPage;
+        this.totalPages = response.totalPages;
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erreur lors du chargement des absences:', error);
         this.isLoading = false;
-        // Vous pouvez ajouter une notification d'erreur ici
       }
     });
   }
+
+
+  setFilter(filter: 'ALL' | 'JUSTIFIER' | 'NON_JUSTIFIER'): void {
+    this.currentFilter = filter;
+    this.loadAbscences(0); // Retour à la première page
+  }
+
+  // Navigation pagination
+  onPageChange(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.loadAbscences(page);
+    }
+  }
+
+  // Méthodes utilitaires pour la pagination
+  get pages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i);
+  }
+
+  get isFirstPage(): boolean {
+    return this.currentPage === 0;
+  }
+
+  get isLastPage(): boolean {
+    return this.currentPage === this.totalPages - 1;
+  }
+
+  // Navigation page précédente/suivante
+  previousPage(): void {
+    if (!this.isFirstPage) {
+      this.onPageChange(this.currentPage - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (!this.isLastPage) {
+      this.onPageChange(this.currentPage + 1);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   openJustification(absenceId: string): void {
     // Éviter d'ouvrir si déjà en cours de chargement
@@ -97,16 +177,16 @@ export class AbscencesComponent {
             if (this.selectedJustificatif) {
               this.selectedJustificatif.statutJustification = 'VALIDE';
             }
-            
+
             // Actualiser la liste des absences
             this.loadAbscences();
-            
+
             this.isLoadingActions = false;
             this.isActionValidating = false;
-            
+
             // Fermer la modal
             this.dialog.closeAll();
-            
+
             // Notification de succès
             alert('Justification validée avec succès.');
           },
@@ -135,16 +215,16 @@ export class AbscencesComponent {
             if (this.selectedJustificatif) {
               this.selectedJustificatif.statutJustification = 'REJETEE';
             }
-            
+
             // Actualiser la liste des absences
             this.loadAbscences();
-            
+
             this.isLoadingActions = false;
             this.isActionRejecting = false;
-            
+
             // Fermer la modal
             this.dialog.closeAll();
-            
+
             // Notification de succès
             alert('Justification rejetée avec succès.');
           },
